@@ -1,3 +1,19 @@
+// Recipes API
+//
+// This is a sample recipes API. You can find out more about the API at https://github.com/xuzheng465/recipes-api.
+//
+//	Schemes: http
+//  Host: localhost:8080
+//	BasePath: /
+//	Version: 1.0.0
+//	Contact: Xu Zheng <zhengxu465@gmail.com>
+//
+//	Consumes:
+//	- application/json
+//
+//	Produces:
+//	- application/json
+// swagger:meta
 package main
 
 import (
@@ -46,6 +62,22 @@ func SearchRecipesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, listOfRecipes)
 }
 
+// swagger:operation DELETE /recipes/{id} recipes deleteRecipe
+// Delete an existing recipe
+// ---
+// produces:
+// - application/json
+// parameters:
+//   - name: id
+//     in: path
+//     description: ID of the recipe
+//     required: true
+//     type: string
+// responses:
+//     '200':
+//         description: Successful operation
+//     '404':
+//         description: Invalid recipe ID
 func DeleteRecipeHandler(c *gin.Context) {
 	id := c.Param("id")
 	index := -1
@@ -63,6 +95,24 @@ func DeleteRecipeHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "recipe deleted"})
 }
 
+// swagger:operation PUT /recipes/{id} recipes UpdateRecipe
+// Updates a recipe
+// ---
+// parameters:
+// - name: id
+//   in: path
+//   description: id of the recipe to update
+//   required: true
+//   type: string
+// produces:
+// - application/json
+// responses:
+//   '200':
+//     description: Successful operation
+//   '404':
+//     description: Recipe not found
+//   '400':
+//     description: Invalid input
 func UpdateRecipeHandler(c *gin.Context) {
 	id := c.Param("id")
 	var recipe Recipe
@@ -87,10 +137,28 @@ func UpdateRecipeHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, recipe)
 }
 
+// swagger:operation GET /recipes recipes ListRecipes
+// Returns list of recipes
+// ---
+// produces:
+// - application/json
+// responses:
+//   '200':
+//     description: Successful operation
 func ListRecipesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, recipes)
 }
 
+// swagger:operation POST /recipes recipes newRecipe
+// Create a new recipe
+// ---
+// produces:
+// - application/json
+// responses:
+//     '200':
+//         description: Successful operation
+//     '400':
+//         description: Invalid input
 func NewRecipeHandler(c *gin.Context) {
 	var recipe Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
