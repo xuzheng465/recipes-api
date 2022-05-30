@@ -6,6 +6,7 @@ import (
 	"github.com/rs/xid"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -23,7 +24,26 @@ func main() {
 	router.GET("/recipes", ListRecipesHandler)
 	router.PUT("/recipes/:id", UpdateRecipeHandler)
 	router.DELETE("/recipes/:id", DeleteRecipeHandler)
+	router.GET("/recipes/search", SearchRecipesHandler)
 	router.Run()
+}
+
+func SearchRecipesHandler(c *gin.Context) {
+	tag := c.Query("tag")
+	listOfRecipes := make([]Recipe, 0)
+	for i := 0; i < len(recipes); i++ {
+		found := false
+		for _, t := range recipes[i].Tags {
+			if strings.EqualFold(t, tag) {
+				found = true
+			}
+		}
+		if found {
+			listOfRecipes = append(listOfRecipes, recipes[i])
+		}
+	}
+
+	c.JSON(http.StatusOK, listOfRecipes)
 }
 
 func DeleteRecipeHandler(c *gin.Context) {
@@ -86,7 +106,7 @@ func NewRecipeHandler(c *gin.Context) {
 type Recipe struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
-	Tag          []string  `json:"tag"`
+	Tags         []string  `json:"tags"`
 	Ingredients  []string  `json:"ingredients"`
 	Instructions []string  `json:"instructions"`
 	PublishedAt  time.Time `json:"published_at"`
